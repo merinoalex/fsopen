@@ -8,6 +8,18 @@ function Header(props) {
   );
 }
 
+function Part(props) {
+  return (
+    <>
+      <p>
+        {props.part} {props.exercises}
+      </p>
+    </>
+  );
+}
+
+/* Code on Exercise 1.1
+
 function Content(props) {
   return (
     <>
@@ -22,7 +34,7 @@ function Content(props) {
       </p>
     </>
   );
-}
+} */
 
 function Total(props) {
   return (
@@ -41,13 +53,20 @@ const App = () => {
   const part3 = 'State of a component'
   const exercises3 = 14
 
+  const Content = (props) => {
+    return (
+      <div>
+        <Part part={part1} exercises={exercises1} />
+        <Part part={part2} exercises={exercises2} />
+        <Part part={part3} exercises={exercises3} />
+      </div>
+    );
+  }
+
   return(
     <div>
       <Header course={course} />
-      <Content 
-      part1={part1} exercises1={exercises1}
-      part2={part2} exercises2={exercises2}
-      part3={part3} exercises3={exercises3} />
+      <Content />
       <Total 
         exercises1={exercises1}
         exercises2={exercises2}

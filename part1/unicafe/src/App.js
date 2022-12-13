@@ -6,23 +6,24 @@ const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
 const Statistics = (props) => {
   const sum = props.good + props.neutral + props.bad
-  // if there are no values percent = 0
-  let percent
-  if (sum !== 0) {
-    percent = (props.good / sum) * 100
-  } else {
-    percent = 0
-  }
 
+  if (sum !== 0) {
+    return (
+      <>
+        <h1>{props.title}</h1>
+        <p>good {props.good}</p>
+        <p>neutral {props.neutral}</p>
+        <p>bad {props.bad}</p>
+        <p>all {sum}</p>
+        <p>average {sum / 3}</p>
+        <p>positive {(props.good / sum) * 100}%</p>
+      </>
+    )
+  }
   return (
     <>
       <h1>{props.title}</h1>
-      <p>good {props.good}</p>
-      <p>neutral {props.neutral}</p>
-      <p>bad {props.bad}</p>
-      <p>all {sum}</p>
-      <p>average {sum / 3}</p>
-      <p>positive {percent}%</p>
+      <p>No feedback given</p>
     </>
   )
 }

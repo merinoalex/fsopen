@@ -4,25 +4,29 @@ const Header = ({text}) => <h1>{text}</h1>
 
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
+const StatisticsLine = (props) => {
+  return (
+    <p>{props.text} {props.value}</p>
+  )
+}
+
 const Statistics = (props) => {
   const sum = props.good + props.neutral + props.bad
 
   if (sum !== 0) {
     return (
       <>
-        <h1>{props.title}</h1>
-        <p>good {props.good}</p>
-        <p>neutral {props.neutral}</p>
-        <p>bad {props.bad}</p>
-        <p>all {sum}</p>
-        <p>average {sum / 3}</p>
-        <p>positive {(props.good / sum) * 100}%</p>
+      <StatisticsLine text='good' value={props.good} />
+      <StatisticsLine text='neutral' value={props.neutral} />
+      <StatisticsLine text='bad' value={props.bad} />
+      <StatisticsLine text='all' value={sum} />
+      <StatisticsLine text='average' value={sum / 3} />
+      <StatisticsLine text='positive' value={(props.good / sum) * 100 + '%'} />
       </>
     )
   }
   return (
     <>
-      <h1>{props.title}</h1>
       <p>No feedback given</p>
     </>
   )
@@ -53,8 +57,8 @@ const App = () => {
         onClick={handleBad}
         text='bad'
       />
+      <h1>statistics</h1>
       <Statistics
-        title='statistics'
         good={good}
         neutral={neutral}
         bad={bad}

@@ -6,7 +6,10 @@ const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
 const StatisticsLine = (props) => {
   return (
-    <p>{props.text} {props.value}</p>
+    <tr>
+      <th>{props.text}</th>
+      <td>{props.value}</td>
+    </tr>
   )
 }
 
@@ -15,20 +18,20 @@ const Statistics = (props) => {
 
   if (sum !== 0) {
     return (
-      <>
-      <StatisticsLine text='good' value={props.good} />
-      <StatisticsLine text='neutral' value={props.neutral} />
-      <StatisticsLine text='bad' value={props.bad} />
-      <StatisticsLine text='all' value={sum} />
-      <StatisticsLine text='average' value={sum / 3} />
-      <StatisticsLine text='positive' value={(props.good / sum) * 100 + '%'} />
-      </>
+      <table>
+        <tbody>
+          <StatisticsLine text='good' value={props.good} />
+          <StatisticsLine text='neutral' value={props.neutral} />
+          <StatisticsLine text='bad' value={props.bad} />
+          <StatisticsLine text='all' value={sum} />
+          <StatisticsLine text='average' value={sum / 3} />
+          <StatisticsLine text='positive' value={(props.good / sum) * 100 + '%'} />
+        </tbody>
+      </table>
     )
   }
   return (
-    <>
-      <p>No feedback given</p>
-    </>
+    <p>No feedback given</p>
   )
 }
 

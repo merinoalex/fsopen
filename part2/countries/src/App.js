@@ -13,32 +13,64 @@ const Search = ({ query, queryHandler }) => {
 }
 
 const CountryName = ({ country }) => {
-  return (
-    <p>{country.name.common}</p>
-  )
+  const [expandCountry, setExpandCountry] = useState(false)
+
+  const handleExpandCountry = () => {
+    setExpandCountry(true)
+  }
+
+  if (expandCountry === true) {
+    return (
+      <CountryDetails
+        country={country}
+      />
+    )
+  } else {
+    return (
+      <div>
+        {country.name.common} <button onClick={handleExpandCountry}>show</button>
+      </div>
+    )
+  }
 }
 
 const CountryDetails = ({ country }) => {
-  return (
-    <>
-      <h2>{country.name.common}</h2>
-      <div>
-        <p>Capital: {country.capital[0]}</p>
-        <p>Area: {country.area}</p>
-      </div>
-      <div>
-        <h3>Languages:</h3>
-        <ul>
-          {Object.values(country.languages).map((l, index) =>
-            <li key={index}>{l}</li>
-          )}
-        </ul>
-      </div>
-      <div>
-        <img src={country.flags.png} height="150px"/>
-      </div>
-    </>
-  )
+  const [hideCountry, setHideCountry] = useState(false)
+
+  const handleHideCountry = () => {
+    setHideCountry(true)
+  }
+
+  if (hideCountry === true) {
+    return (
+      <CountryName
+        key={country.cca2}
+        country={country}
+      />
+    )
+  } else {
+    return (
+      <>
+        <h2>{country.name.common}</h2>
+        <button onClick={handleHideCountry}>hide</button>
+        <div>
+          <p>Capital: {country.hasOwnProperty('capital') ? country.capital[0] : 'none'}</p>
+          <p>Area: {country.area}</p>
+        </div>
+        <div>
+          <h3>Languages:</h3>
+          <ul>
+            {Object.values(country.languages).map((l, index) =>
+              <li key={index}>{l}</li>
+            )}
+          </ul>
+        </div>
+        <div>
+          <img src={country.flags.png} height="150px"/>
+        </div>
+      </>
+    )
+  }
 }
 
 const Countries = ({ countries, filter }) => {

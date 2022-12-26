@@ -1,2 +1,4 @@
 node_modules/
 _sandbox_/
+
+*.env

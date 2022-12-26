@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
 const Search = ({ query, queryHandler }) => {
@@ -34,6 +34,30 @@ const CountryName = ({ country }) => {
   }
 }
 
+const Weather = ({ country }) => {
+  const [weather, setWeather] = useState(null)
+  const api_key = process.env.REACT_APP_API_KEY
+
+  useEffect(() => {
+    axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?lat=${country.latlng[0]}&lon=${country.latlng[1]}&appid=${api_key}&units=metric`)
+      .then(response => {
+        setWeather(response.data)
+      })
+  }, [country])
+
+  if (!weather) {
+    return null
+  } else {
+  return (
+    <div>
+      <h3>Weather in {country.name.common}</h3>
+      <p>Temperature: {weather.main.temp} °C</p>
+      <img src={'http://openweathermap.org/img/wn/' + weather.weather[0].icon.replace(/d/, "n") + '@2x.png'} alt={weather.weather.description} />
+      <p>Wind speed: {weather.wind.speed} m/s</p>
+    </div>
+  )}}
+
 const CountryDetails = ({ country }) => {
   const [hideCountry, setHideCountry] = useState(false)
 
@@ -44,7 +68,7 @@ const CountryDetails = ({ country }) => {
   if (hideCountry === true) {
     return (
       <CountryName
-        key={country.cca2}
+        key={country.ccn3}
         country={country}
       />
     )
@@ -66,8 +90,9 @@ const CountryDetails = ({ country }) => {
           </ul>
         </div>
         <div>
-          <img src={country.flags.png} height="150px"/>
+          <img src={country.flags.png} height="150px" alt={'Flag from ' + country.name.common}/>
         </div>
+        <Weather country={country} />
       </>
     )
   }
@@ -92,7 +117,7 @@ const Countries = ({ countries, filter }) => {
     return (
       showCountries.map(c => 
         <CountryName 
-          key={c.cca2}
+          key={c.ccn3}
           country={c}
         />)
     )
@@ -109,7 +134,7 @@ const App = () => {
       .then(response => {
         setCountries(response.data)
       })
-  })
+  }, [])
 
   const handleQueryChange = (event) => {
     setNewQuery(event.target.value)

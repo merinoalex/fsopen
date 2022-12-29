@@ -53,7 +53,7 @@ const Weather = ({ country }) => {
     <div>
       <h3>Weather in {country.name.common}</h3>
       <p>Temperature: {weather.main.temp} °C</p>
-      <img src={'http://openweathermap.org/img/wn/' + weather.weather[0].icon.replace(/d/, "n") + '@2x.png'} alt={weather.weather.description} />
+      <img src={'http://openweathermap.org/img/wn/' + weather.weather[0].icon.replace(/d/, "n") + '@2x.png'} alt={weather.weather[0].description} />
       <p>Wind speed: {weather.wind.speed} m/s</p>
     </div>
   )}}

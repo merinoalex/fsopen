@@ -39,6 +39,22 @@ const App = () => {
     }
   }
 
+  const deletePersonHandler = id => {
+    const person = persons.find(p => p.id === id)
+
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .deleteEntry(person.id)
+        .then(() => {
+          personService
+            .getAll()
+            .then(newPersons => {
+              setPersons(newPersons)
+            })
+        })
+    }
+  }
+
   const showPersons = newFilter
     ? persons.filter(f => 
       JSON.stringify(f.name).toLocaleLowerCase()
@@ -73,7 +89,10 @@ const App = () => {
         numberHandler={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <List show={showPersons} />
+      <List 
+        show={showPersons} 
+        deletePerson={deletePersonHandler}
+      />
     </div>
   )
 }

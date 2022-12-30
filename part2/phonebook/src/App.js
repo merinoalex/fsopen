@@ -5,32 +5,7 @@ import './index.css'
 import Filter from './components/Filter'
 import Form from './components/Form'
 import List from './components/List'
-
-const Notification = ({ notifMessage }) => {
-  const successNotif = {
-    background: 'rgb(150, 185, 155)',
-    borderLeftColor: 'rgb(94, 163, 103)',
-  }
-  const errorNotif = {
-    background: 'rgb(212, 130, 130)',
-    borderLeftColor: 'rgb(212, 60, 60)'
-  }
-  let status
-
-  if (notifMessage.status === null) {
-    return null
-  } else if (notifMessage.status === 'success') {
-    status = successNotif
-  } else if (notifMessage.status === 'error') {
-    status = errorNotif
-  }
-  return (
-    <div style={status} className='notification'>
-      {notifMessage.message}
-    </div>
-  )
-  
-}
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -54,7 +29,7 @@ const App = () => {
       number: newNumber,
     }
 
-    if (JSON.stringify(persons).includes(newName)) {
+    if (persons.find(p => p.name === newName)) {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         const person = persons.find(p => p.name === newName)
         const changedPerson = { ...person, number: newNumber }
@@ -64,7 +39,6 @@ const App = () => {
           .then(returnedPerson => {
             setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
           })
-          .catch(error => console.error(error))
           .then(() => {
             setNotifMessage(
               {
@@ -75,6 +49,19 @@ const App = () => {
             setTimeout(() => {
               setNotifMessage({status: null, message: null})
             }, 5000);
+          })
+          .catch(error => {
+            setNotifMessage(
+              {
+                status: 'error',
+                message: `Information of ${newName} has already been removed from server`
+              }
+            )
+            setTimeout(() => {
+              setNotifMessage({status: null, message: null})
+            }, 5000);
+            console.error(error)
+            setPersons(persons.filter(p => p.id !== changedPerson.id))
           })
       }
     } else {

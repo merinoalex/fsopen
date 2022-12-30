@@ -22,8 +22,13 @@
     },
     {
       "name": "Juha Tauriainen",
-      "number": "12341234",
-      "id": 8
+      "number": "-",
+      "id": 5
+    },
+    {
+      "name": "Edsger Dijkstra",
+      "number": "-",
+      "id": 6
     }
   ]
 }

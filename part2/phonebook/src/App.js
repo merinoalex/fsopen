@@ -1,15 +1,43 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
+import './index.css'
 
 import Filter from './components/Filter'
 import Form from './components/Form'
 import List from './components/List'
+
+const Notification = ({ notifMessage }) => {
+  const successNotif = {
+    background: 'rgb(150, 185, 155)',
+    borderLeftColor: 'rgb(94, 163, 103)',
+  }
+  const errorNotif = {
+    background: 'rgb(212, 130, 130)',
+    borderLeftColor: 'rgb(212, 60, 60)'
+  }
+  let status
+
+  if (notifMessage.status === null) {
+    return null
+  } else if (notifMessage.status === 'success') {
+    status = successNotif
+  } else if (notifMessage.status === 'error') {
+    status = errorNotif
+  }
+  return (
+    <div style={status} className='notification'>
+      {notifMessage.message}
+    </div>
+  )
+  
+}
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setFilter] = useState('')
+  const [notifMessage, setNotifMessage] = useState({status: null, message: null})
 
   useEffect(() => {
     personService
@@ -37,6 +65,17 @@ const App = () => {
             setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
           })
           .catch(error => console.error(error))
+          .then(() => {
+            setNotifMessage(
+              {
+                status: 'success',
+                message: `Updated ${newName} to ${newNumber}`
+              }
+            )
+            setTimeout(() => {
+              setNotifMessage({status: null, message: null})
+            }, 5000);
+          })
       }
     } else {
       personService
@@ -45,6 +84,17 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
+        })
+        .then(() => {
+          setNotifMessage(
+            {
+              status: 'success',
+              message: `Added ${newName}`
+            }
+          )
+          setTimeout(() => {
+            setNotifMessage({status: null, message: null})
+          }, 5000);
         })
     }
   }
@@ -85,7 +135,8 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <Notification notifMessage={notifMessage} />
       <Filter 
         filter={newFilter} 
         filterHandler={handleFilterChange}

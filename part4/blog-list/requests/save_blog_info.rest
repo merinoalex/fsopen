@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Structured programming",
+  "author": "Edsger Dijkstra",
+  "url": "www.wikipedia.com",
+  "likes": 102
+}

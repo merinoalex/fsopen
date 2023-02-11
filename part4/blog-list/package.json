@@ -1,0 +1,33 @@
+{
+  "name": "blog-list",
+  "version": "0.0.1",
+  "description": "Blog list application, allowing users to save information about interesting blogs they have stumbled across",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/merinoalex/fsopen.git"
+  },
+  "keywords": [
+    "fsopen"
+  ],
+  "author": "Alex Merino",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/merinoalex/fsopen/issues"
+  },
+  "homepage": "https://github.com/merinoalex/fsopen#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^6.9.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}

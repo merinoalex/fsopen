@@ -96,3 +96,17 @@ describe('Favorite blog', () => {
     expect(listHelper.favoriteBlog(listWithManyBlogs)).toBe('Canonical string reduction')
   })
 })
+
+describe('Author with most blogs', () => {
+  test('of empty list is...', () => {
+    expect(listHelper.mostBlogs([])).toBe(null)
+  })
+
+  test('when a list has only one blog, equals that author', () => {
+    expect(listHelper.mostBlogs(listWithOneBlog)).toEqual({ author: 'Edsger W. Dijkstra', blogs: 1 })
+  })
+
+  test('of a bigger list is "Robert C. Martin"', () => {
+    expect(listHelper.mostBlogs(listWithManyBlogs)).toEqual({ author: 'Robert C. Martin', blogs: 3 })
+  })
+})

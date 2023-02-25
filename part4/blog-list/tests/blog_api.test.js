@@ -48,6 +48,14 @@ test('a specific blog is within the returned blogs', async () => {
   )
 })
 
+test('the unique identifier property of blog posts is named id', async () => {
+  const res = await api.get('/api/blogs')
+
+  for (let blog of res.body) {
+    expect(blog.id).toBeDefined()
+  }
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })

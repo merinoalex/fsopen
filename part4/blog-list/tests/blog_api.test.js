@@ -64,23 +64,58 @@ test('a blog can be added', async () => {
   expect(blogs).toContainEqual(newBlog)
 })
 
-test('a blog without the likes property assigned defaults to 0 likes', async () => {
-  const newBlog = {
-    title: 'Newline at the end of files',
-    author: 'anonymous',
-    url: 'www.stackoverflow.com'
-  }
+describe('A blog missing', () => {
+  test('the likes property defaults to 0 likes', async () => {
+    const newBlog = {
+      title: 'Newline at the end of files',
+      author: 'anonymous',
+      url: 'www.stackoverflow.com'
+    }
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
 
-  const blogsAtEnd = await helper.blogsInDb()
+    const blogsAtEnd = await helper.blogsInDb()
 
-  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
-  expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toBe(0)
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+    expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toBe(0)
+  })
+
+  test('the title property responds with status code 400 Bad Request', async () => {
+    const noTitleBlog = {
+      author: 'John Doe',
+      url: 'www.webzone.com',
+      likes: 4
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(noTitleBlog)
+      .expect(400)
+
+    const notesAtEnd = await helper.blogsInDb()
+
+    expect(notesAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
+
+  test('the url property responds with status code 400 Bad Request', async () => {
+    const noUrlBlog = {
+      title: 'Lodash library',
+      author: 'Ivan Ivanovsky'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(noUrlBlog)
+      .expect(400)
+
+    const notesAtEnd = await helper.blogsInDb()
+
+    expect(notesAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
 })
 
 afterAll(async () => {

@@ -137,6 +137,18 @@ describe('When there are initially some blogs saved', () => {
       expect(blogsAtEnd).not.toContain(blogToDelete)
     })
 
+    test('succeeds with status code 204 if blog doesn\'t exist', async () => {
+      const validNonExistingId = await helper.nonExistingId()
+
+      await api
+        .delete(`/api/blogs/${validNonExistingId}`)
+        .expect(204)
+
+      const blogsAtEnd = await helper.blogsInDb()
+
+      expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    })
+
     test('fails with status code 400 if id is invalid', async () => {
       const invalidId = '5a3d5da59070081a82a3445'
 
@@ -147,6 +159,53 @@ describe('When there are initially some blogs saved', () => {
       const blogsAtEnd = await helper.blogsInDb()
 
       expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    })
+  })
+
+  describe('Update of a blog entry', () => {
+    test('succeeds with status code 204 and returns the new object', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+
+      const blogToUpdate = blogsAtStart[0]
+
+      const updatedBlog = {
+        title: 'REST API',
+        author: 'Roy Fielding',
+        url: 'www.blog.com',
+        likes: 67 // new likes
+      }
+
+      await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(updatedBlog)
+        .expect(204)
+
+      const blogsAtEnd = await helper.blogsInDb()
+      const likes = blogsAtEnd.map(r => r.likes)
+
+      expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+      expect(blogsAtEnd).not.toContainEqual(blogToUpdate)
+      expect(likes[0]).toBe(updatedBlog.likes)
+    })
+
+    test('fails with status code 400 if id is invalid', async () => {
+      const invalidId = '5a3d5da59070081a82a3445'
+
+      const blogsAtStart = await helper.blogsInDb()
+
+      const updatedBlog = {
+        title: 'placeholder',
+        url: 'placeholder'
+      }
+
+      await api
+        .put(`/api/blogs/${invalidId}`)
+        .send(updatedBlog)
+        .expect(400)
+
+      const blogsAtEnd = await helper.blogsInDb()
+
+      expect(blogsAtEnd).toEqual(blogsAtStart)
     })
   })
 })

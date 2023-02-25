@@ -64,6 +64,25 @@ test('a blog can be added', async () => {
   expect(blogs).toContainEqual(newBlog)
 })
 
+test('a blog without the likes property assigned defaults to 0 likes', async () => {
+  const newBlog = {
+    title: 'Newline at the end of files',
+    author: 'anonymous',
+    url: 'www.stackoverflow.com'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+  expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toBe(0)
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })

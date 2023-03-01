@@ -244,25 +244,109 @@ describe('When there is initially one user in the DB,', () => {
     expect(usernames).toContain(newUser.username)
   })
 
-  test('creation fails with proper status code and message if username is already taken', async () => {
-    const usersAtStart = await helper.usersInDb()
+  describe('creation fails with proper status code and message if', () => {
+    test('username is already taken', async () => {
+      const usersAtStart = await helper.usersInDb()
 
-    const newUser = {
-      username: 'root',
-      name: 'Superuser',
-      password: 'salainen',
-    }
+      const newUser = {
+        username: 'root',
+        name: 'Superuser',
+        password: 'salainen',
+      }
 
-    const result = await api
-      .post('/api/users')
-      .send(newUser)
-      .expect(400)
-      .expect('Content-Type', /application\/json/)
+      const result = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
 
-    expect(result.body.error).toContain('expected `username` to be unique')
+      expect(result.body.error).toContain('expected `username` to be unique')
 
-    const usersAtEnd = await helper.usersInDb()
-    expect(usersAtEnd).toEqual(usersAtStart)
+      const usersAtEnd = await helper.usersInDb()
+      expect(usersAtEnd).toEqual(usersAtStart)
+    })
+
+    test('username is missing', async () => {
+      const usersAtStart = await helper.usersInDb()
+
+      const noUsernameUser = {
+        name: 'Matti Luukkainen',
+        password: 'salainen'
+      }
+
+      const result = await api
+        .post('/api/users')
+        .send(noUsernameUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+      expect(result.body.error).toContain('username: Path `username` is required')
+
+      const usersAtEnd = await helper.usersInDb()
+      expect(usersAtEnd).toEqual(usersAtStart)
+    })
+
+    test('password is missing', async () => {
+      const usersAtStart = await helper.usersInDb()
+
+      const noPasswordUser = {
+        username: 'mluukkai',
+        name: 'Matti Luukkainen'
+      }
+
+      const result = await api
+        .post('/api/users')
+        .send(noPasswordUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+      expect(result.body.error).toContain('Password must be given')
+
+      const usersAtEnd = await helper.usersInDb()
+      expect(usersAtEnd).toEqual(usersAtStart)
+    })
+
+    test('invalid username is given', async () => {
+      const usersAtStart = await helper.usersInDb()
+
+      const invalidUsername = {
+        username: 'ml',
+        name: 'Matti Luukkainen',
+        password: 'salainen'
+      }
+
+      const result = await api
+        .post('/api/users')
+        .send(invalidUsername)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+      expect(result.body.error).toContain('Path `username`', 'is shorter than the minimum allowed length')
+
+      const usersAtEnd = await helper.usersInDb()
+      expect(usersAtEnd).toEqual(usersAtStart)
+    })
+
+    test('invalid password is given', async () => {
+      const usersAtStart = await helper.usersInDb()
+
+      const invalidPassword = {
+        username: 'mluukkai',
+        name: 'Matti Luukkainen',
+        password: 'sa'
+      }
+
+      const result = await api
+        .post('/api/users')
+        .send(invalidPassword)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+      expect(result.body.error).toContain('Password must be at least 3 characters long')
+
+      const usersAtEnd = await helper.usersInDb()
+      expect(usersAtEnd).toEqual(usersAtStart)
+    })
   })
 })
 

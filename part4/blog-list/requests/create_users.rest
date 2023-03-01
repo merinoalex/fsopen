@@ -16,3 +16,41 @@ Content-Type: application/json
   "name": "Matti Luukkainen",
   "password": "salainen"
 }
+
+### Invalid user creation 1
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "name": "Matti Luukkainen",
+  "password": "salainen"
+}
+
+### Invalid user creation 2
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "mluukkai",
+  "name": "Matti Luukkainen"
+}
+
+### Invalid user creation 3
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "ml",
+  "name": "Matti Luukkainen",
+  "password": "salainen"
+}
+
+### Invalid user creation 4
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "mluukkai",
+  "name": "Matti Luukkainen",
+  "password": "sa"
+}

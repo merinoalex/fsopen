@@ -6,6 +6,7 @@ const api = supertest(app)
 const bcrypt = require('bcrypt')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 
 jest.setTimeout(100000)
 
@@ -45,122 +46,198 @@ describe('When there are initially some blogs saved,', () => {
     }
   })
 
-  test('a blog can be added', async () => {
-    const newBlog = {
-      title: 'Code refactoring',
-      author: 'Martin Fowler',
-      url: 'www.martinfowler.com',
-      likes: 82
-    }
+  describe('Adding a blog', () => {
+    let token = null
+    beforeEach(async () => {
+      await User.deleteMany({})
 
-    await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
+      const rootUser = {
+        username: 'root',
+        password: 'geheim'
+      }
 
-    const blogsAtEnd = await helper.blogsInDb()
+      const passwordHash = await bcrypt.hash(rootUser.password, 10)
+      const newUser = new User({ username: rootUser.username, passwordHash })
 
-    const blogs = blogsAtEnd.map(r => ({ title: r.title, author: r.author, url: r.url, likes: r.likes }))
+      const savedUser = await newUser.save()
 
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
-    expect(blogs).toContainEqual(newBlog)
-  })
+      token = jwt.sign(
+        { username: savedUser.username, id: savedUser._id },
+        process.env.SECRET,
+        { expiresIn: 60 * 60 }
+      )
+    })
 
-  describe('A blog missing', () => {
-    test('the likes property defaults to 0 likes', async () => {
+    test('succeeds with status code 201 with a valid token', async () => {
       const newBlog = {
-        title: 'Newline at the end of files',
-        author: 'anonymous',
-        url: 'www.stackoverflow.com'
+        title: 'Code refactoring',
+        author: 'Martin Fowler',
+        url: 'www.martinfowler.com',
+        likes: 82
       }
 
       await api
         .post('/api/blogs')
         .send(newBlog)
+        .set('Authorization', `Bearer ${token}`)
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
       const blogsAtEnd = await helper.blogsInDb()
 
+      const blogs = blogsAtEnd.map(r => ({ title: r.title, author: r.author, url: r.url, likes: r.likes }))
+
       expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
-      expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toBe(0)
+      expect(blogs).toContainEqual(newBlog)
     })
 
-    test('the title property responds with status code 400 Bad Request', async () => {
-      const noTitleBlog = {
-        author: 'John Doe',
-        url: 'www.webzone.com',
-        likes: 4
-      }
+    describe('missing', () => {
+      test('a token fails with status code 401', async () => {
+        const blogsAtStart = await helper.blogsInDb()
 
-      await api
-        .post('/api/blogs')
-        .send(noTitleBlog)
-        .expect(400)
+        const newBlog = {
+          title: 'Newline at the end of files',
+          author: 'anonymous',
+          url: 'www.stackoverflow.com'
+        }
 
-      const notesAtEnd = await helper.blogsInDb()
+        const result = await api
+          .post('/api/blogs')
+          .send(newBlog)
+          .expect(401)
 
-      expect(notesAtEnd).toHaveLength(helper.initialBlogs.length)
-    })
+        expect(result.body.error).toContain('Token missing')
 
-    test('the url property responds with status code 400 Bad Request', async () => {
-      const noUrlBlog = {
-        title: 'Lodash library',
-        author: 'Ivan Ivanovsky'
-      }
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
+      })
 
-      await api
-        .post('/api/blogs')
-        .send(noUrlBlog)
-        .expect(400)
+      test('the likes property defaults to 0 likes', async () => {
+        const newBlog = {
+          title: 'Newline at the end of files',
+          author: 'anonymous',
+          url: 'www.stackoverflow.com'
+        }
 
-      const notesAtEnd = await helper.blogsInDb()
+        await api
+          .post('/api/blogs')
+          .send(newBlog)
+          .set('Authorization', `Bearer ${token}`)
+          .expect(201)
+          .expect('Content-Type', /application\/json/)
 
-      expect(notesAtEnd).toHaveLength(helper.initialBlogs.length)
+        const blogsAtEnd = await helper.blogsInDb()
+
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+        expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toBe(0)
+      })
+
+      test('the title property responds with status code 400 Bad Request', async () => {
+        const noTitleBlog = {
+          author: 'John Doe',
+          url: 'www.webzone.com',
+          likes: 4
+        }
+
+        await api
+          .post('/api/blogs')
+          .send(noTitleBlog)
+          .set('Authorization', `Bearer ${token}`)
+          .expect(400)
+
+        const notesAtEnd = await helper.blogsInDb()
+
+        expect(notesAtEnd).toHaveLength(helper.initialBlogs.length)
+      })
+
+      test('the url property responds with status code 400 Bad Request', async () => {
+        const noUrlBlog = {
+          title: 'Lodash library',
+          author: 'Ivan Ivanovsky'
+        }
+
+        await api
+          .post('/api/blogs')
+          .send(noUrlBlog)
+          .set('Authorization', `Bearer ${token}`)
+          .expect(400)
+
+        const notesAtEnd = await helper.blogsInDb()
+
+        expect(notesAtEnd).toHaveLength(helper.initialBlogs.length)
+      })
     })
   })
 
   describe('Deletion of a blog', () => {
+    let token = null
+    beforeAll(async () => {
+      await User.deleteMany({})
+
+      const rootUser = {
+        username: 'root',
+        password: 'geheim'
+      }
+
+      const passwordHash = await bcrypt.hash(rootUser.password, 10)
+      const newUser = new User({ username: rootUser.username, passwordHash })
+
+      const savedUser = await newUser.save()
+
+      token = jwt.sign(
+        { username: savedUser.username, id: savedUser._id },
+        process.env.SECRET,
+        { expiresIn: 60 * 60 }
+      )
+    })
+
+    beforeEach(async () => {
+      await Blog.deleteMany({})
+
+      const newBlog = {
+        title: 'REST API',
+        author: 'Roy Fielding',
+        url: 'www.blog.com',
+        likes: 45
+      }
+
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(newBlog)
+    })
+
     test('succeeds with status code 204 if id is valid', async () => {
       const blogsAtStart = await helper.blogsInDb()
-      const blogToDelete = blogsAtStart[1]
+      const blogToDelete = blogsAtStart[0]
 
       await api
         .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect(204)
 
       const blogsAtEnd = await helper.blogsInDb()
 
       expect(blogsAtEnd).toHaveLength(
-        helper.initialBlogs.length - 1
+        blogsAtStart.length - 1
       )
 
       expect(blogsAtEnd).not.toContain(blogToDelete)
     })
 
-    test('succeeds with status code 204 if blog doesn\'t exist', async () => {
-      const validNonExistingId = await helper.nonExistingId()
-
-      await api
-        .delete(`/api/blogs/${validNonExistingId}`)
-        .expect(204)
-
-      const blogsAtEnd = await helper.blogsInDb()
-
-      expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
-    })
-
     test('fails with status code 400 if id is invalid', async () => {
+      const blogsAtStart = await helper.blogsInDb()
+
       const invalidId = '5a3d5da59070081a82a3445'
 
       await api
         .delete(`/api/blogs/${invalidId}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect(400)
 
       const blogsAtEnd = await helper.blogsInDb()
 
-      expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+      expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
     })
   })
 

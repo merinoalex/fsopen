@@ -1,5 +1,5 @@
-DELETE http://localhost:3003/api/blogs/64003541bd07f79bb569d803
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2M2ZmYjdkNGVlNDY1YzllZjgwNDJiMjkiLCJpYXQiOjE2Nzc3MzEyNjh9.cxMo49OsC-FxjGT2_CXNvzIHM2cwQV7wIChzAG0ZfKE
+DELETE http://localhost:3003/api/blogs/6400fe31e0cc9318b64f0e83
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2M2ZmYjdkNGVlNDY1YzllZjgwNDJiMjkiLCJpYXQiOjE2Nzc3MjI3MzB9.8rA8R7KcqiaISzdiF5Cyn_L3lBG1zEV8ZkhzG_TbgQM
 
 ### jwt must be provided
 DELETE http://localhost:3003/api/blogs/640024cf4784b30f66901df2

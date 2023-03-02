@@ -1,8 +1,6 @@
 const blogsRouter = require('express').Router()
+const middleware = require('../utils/middleware')
 const Blog = require('../models/blog')
-const User = require('../models/user')
-
-const jwt = require('jsonwebtoken')
 
 blogsRouter.get('/', async (req, res) => {
   const blogs = await Blog
@@ -11,7 +9,11 @@ blogsRouter.get('/', async (req, res) => {
   res.json(blogs)
 })
 
-blogsRouter.post('/', async (req, res) => {
+blogsRouter.post('/', middleware.userExtractor, async (req, res) => {
+  if (!req.token) {
+    return res.status(401).json({ error: 'Token must be provided' })
+  }
+
   const body = req.body
 
   const user = req.user
@@ -40,12 +42,10 @@ blogsRouter.get('/:id', async (req, res) => {
   }
 })
 
-blogsRouter.delete('/:id', async (req, res) => {
-  if(!req.token) {
-    return res.status(401).json({ error: 'Token must be provided' })
-  }
-
+blogsRouter.delete('/:id', middleware.userExtractor, async (req, res) => {
   const blog = await Blog.findById(req.params.id)
+  if (!blog) return res.status(404).json({ error: 'Blog doesn\'t exist' })
+
   const user = req.user
 
   if (blog.user.toString() === req.user.id.toString()) {

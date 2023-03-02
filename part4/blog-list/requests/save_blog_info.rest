@@ -32,3 +32,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sd
   "url": "https://overreacted.io/on-let-vs-const/",
   "likes": 0
 }
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2M2ZmYjdkNGVlNDY1YzllZjgwNDJiMjkiLCJpYXQiOjE2Nzc3MjI3MzB9.8rA8R7KcqiaISzdiF5Cyn_L3lBG1zEV8ZkhzG_TbgQM
+
+{
+  "title": "Placeholder",
+  "author": "Placehoder",
+  "url": "example.com",
+  "likes": 0
+}
+

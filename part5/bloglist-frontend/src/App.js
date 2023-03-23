@@ -1,52 +1,17 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
-
-const BlogForm = ({ addBlog, newBlogTitle, newBlogAuthor, newBlogUrl, setNewBlogTitle, setNewBlogAuthor, setNewBlogUrl }) => {
-  return (
-    <div>
-      <h2>Add new blog</h2>
-
-      <form onSubmit={addBlog}>
-        <div>
-          Title: 
-          <input
-            type="text"
-            value={newBlogTitle}
-            name="Title"
-            onChange={({ target }) => setNewBlogTitle(target.value)}
-          />
-        </div>
-        <div>
-          Author: 
-          <input 
-            type="text"
-            value={newBlogAuthor}
-            name="Author"
-            onChange={({ target }) => setNewBlogAuthor(target.value)}
-          />
-        </div>
-        <div>
-          URL: 
-          <input 
-            type="text"
-            value={newBlogUrl}
-            name="URL"
-            onChange={({ target }) => setNewBlogUrl(target.value)}
-          />
-        </div>
-        <button type="submit">Add</button>
-      </form>
-    </div>
-  )
-}
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [newBlogTitle, setNewBlogTitle] = useState('')
   const [newBlogAuthor, setNewBlogAuthor] = useState('')
   const [newBlogUrl, setNewBlogUrl] = useState('')
+
+  const [info, setInfo] = useState({ message: null })
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -66,6 +31,16 @@ const App = () => {
     }
   }, [])
 
+  const notifyWith = (message, type = 'info') => {
+    setInfo({
+      message, type
+    })
+
+    setTimeout(() => {
+      setInfo({ message: null })
+    }, 3000)
+  }
+
   const handleLogin = async (e) => {
     e.preventDefault()
     
@@ -83,7 +58,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      console.log('Wrong credentials')
+      notifyWith('Wrong username or password entered.', 'error')
     }
   }
 
@@ -92,7 +67,7 @@ const App = () => {
     window.location.reload()
   }
 
-  const addBlog = (e) => {
+  const addBlog = async (e) => {
     e.preventDefault()
 
     const blogObject = {
@@ -101,19 +76,33 @@ const App = () => {
       url: newBlogUrl
     }
 
-    blogService
+    const newBlog = await blogService.create(blogObject)
+
+    try {
+      setBlogs(blogs.concat(newBlog))
+      setNewBlogTitle('')
+      setNewBlogAuthor('')
+      setNewBlogUrl('')
+      notifyWith(`New blog added: '${newBlog.title}' by ${newBlog.author}.`)
+    } catch (exception) {
+      console.log(exception)
+    }
+
+/*     blogService
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
         setNewBlogTitle('')
         setNewBlogAuthor('')
         setNewBlogUrl('')
-      })
+      }) */
   }
 
   const loginForm = () => (
     <div>
       <h2>Log in to Application</h2>
+
+      <Notification info={info} />
 
       <form onSubmit={handleLogin}>
         <div>
@@ -144,6 +133,9 @@ const App = () => {
       {!user && loginForm()}
       {user && <div>
           <h2>Blogs</h2>
+
+          <Notification info={info} />
+
           <p>
             {user.name} is logged in. 
             <button onClick={handleLogout}>Logout</button>

@@ -66,7 +66,10 @@ const App = () => {
     const newBlog = await blogService.create(blogObject)
     
     try {
-      setBlogs(blogs.concat(newBlog))
+      // setBlogs(blogs.concat(newBlog))
+      const blogs = await blogService.getAll()
+
+      setBlogs(blogs)
       notifyWith(`New blog added: '${newBlog.title}' by ${newBlog.author}.`)
       blogFormRef.current.toggleVisibility()
     } catch (exception) {

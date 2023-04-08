@@ -19,7 +19,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -29,6 +29,11 @@ const App = () => {
       setUser(user)
     }
   }, [])
+
+  const getAndUpdateBlogs = async () => {
+    const blogs = await blogService.getAll()
+    setBlogs(blogs)
+  }
 
   const notifyWith = (message, type = 'info') => {
     setInfo({
@@ -57,18 +62,16 @@ const App = () => {
     }
   }
 
-  const handleLogout = (e) => {
+  const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
     window.location.reload()
   }
 
   const addBlog = async (blogObject) => {
     const newBlog = await blogService.create(blogObject)
-    
-    try {
-      const blogs = await blogService.getAll()
 
-      setBlogs(blogs)
+    try {
+      getAndUpdateBlogs()
 
       notifyWith(`New blog added: '${newBlog.title}' by ${newBlog.author}.`)
       blogFormRef.current.toggleVisibility()
@@ -83,9 +86,7 @@ const App = () => {
     try {
       await blogService.update(id, editedBlog)
 
-      const blogs = await blogService.getAll()
-      
-      setBlogs(blogs)
+      getAndUpdateBlogs()
     } catch (exception) {
       console.log(exception)
     }
@@ -97,10 +98,8 @@ const App = () => {
     if (window.confirm(`Remove blog "${blogToDelete.title}" by ${blogToDelete.author}?`)) {
       try {
         await blogService.remove(id)
-  
-        const blogs = await blogService.getAll()
-  
-        setBlogs(blogs)
+
+        getAndUpdateBlogs()
       } catch (exception) {
         console.log(exception)
       }
@@ -119,14 +118,14 @@ const App = () => {
           />
         </Togglable>
       }
-      {user && 
+      {user &&
         <div>
           <h2>Blogs</h2>
 
           <Notification info={info} />
 
           <p>
-            {user.name} is logged in. 
+            {user.name} is logged in.
             <button onClick={handleLogout}>Logout</button>
           </p>
 

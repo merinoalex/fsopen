@@ -1,6 +1,6 @@
 import Blog from "./Blog"
 
-const BlogList = ({ blogs, updateBlog }) => {
+const BlogList = ({ blogs, updateBlog, loggedinUser, removeBlog }) => {
   const list = blogs.sort((a, b) => a.likes - b.likes).reverse()
 
   return (
@@ -9,6 +9,8 @@ const BlogList = ({ blogs, updateBlog }) => {
         key={blog.id}
         blog={blog}
         editBlog={updateBlog}
+        loggedinUser={loggedinUser}
+        removeBlog={removeBlog}
       />
     )
   )

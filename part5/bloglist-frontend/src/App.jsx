@@ -77,7 +77,7 @@ const App = () => {
     }
   }
 
-  const updateBlog = async (editedBlog) => {
+  const updateBlog = async editedBlog => {
     const id = editedBlog.id
 
     try {
@@ -88,6 +88,22 @@ const App = () => {
       setBlogs(blogs)
     } catch (exception) {
       console.log(exception)
+    }
+  }
+
+  const removeBlog = async blogToDelete => {
+    const id = blogToDelete.id
+
+    if (window.confirm(`Remove blog "${blogToDelete.title}" by ${blogToDelete.author}?`)) {
+      try {
+        await blogService.remove(id)
+  
+        const blogs = await blogService.getAll()
+  
+        setBlogs(blogs)
+      } catch (exception) {
+        console.log(exception)
+      }
     }
   }
 
@@ -121,6 +137,8 @@ const App = () => {
           <BlogList
             blogs={blogs}
             updateBlog={updateBlog}
+            loggedinUser={user}
+            removeBlog={removeBlog}
           />
         </div>
       }

@@ -59,18 +59,25 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (req, res) => {
   }
 })
 
-blogsRouter.put('/:id', async (req, res) => {
+blogsRouter.put('/:id', middleware.userExtractor, async (req, res) => {
+  if (!req.token) {
+    return res.status(401).json({ error: 'Token must be provided' })
+  }
+
   const body = req.body
+
+  const user = req.user
 
   const blog = {
     title: body.title,
     author: body.author,
     url: body.url,
-    likes: body.likes
+    likes: body.likes,
+    user: user.id
   }
 
   const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, blog, { new: true })
-  res.status(204).json(updatedBlog)
+  res.status(204).json(updatedBlog).end()
 })
 
 module.exports = blogsRouter

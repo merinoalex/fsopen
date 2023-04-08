@@ -1,0 +1,18 @@
+@blogId = 642dfe2f2c0fc654e48e8d7b
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGxhcyIsImlkIjoiNjNmZmI3Y2ZlZTQ2NWM5ZWY4MDQyYjI1IiwiaWF0IjoxNjgwNzM5ODM1LCJleHAiOjE2ODA3NDM0MzV9.5ijaod7scx9CZj9QIMFFSBNv74ioaMiqX3d8JTAdkFM
+@title = You’re NOT gonna need it!
+@author = Ron Jeffries
+@url = https://ronjeffries.com/xprog/articles/practices/pracnotneed/
+@likes = 2
+@userId = 63ffb7cfee465c9ef8042b25
+PUT http://localhost:3003/api/blogs/{{blogId}}
+Content-type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "{{title}}",
+  "author": "{{author}}",
+  "url": "{{url}}",
+  "likes": "{{likes}}",
+  "user": "{{userId}}"
+}

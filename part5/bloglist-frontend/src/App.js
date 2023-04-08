@@ -66,12 +66,26 @@ const App = () => {
     const newBlog = await blogService.create(blogObject)
     
     try {
-      // setBlogs(blogs.concat(newBlog))
       const blogs = await blogService.getAll()
 
       setBlogs(blogs)
+
       notifyWith(`New blog added: '${newBlog.title}' by ${newBlog.author}.`)
       blogFormRef.current.toggleVisibility()
+    } catch (exception) {
+      console.log(exception)
+    }
+  }
+
+  const updateBlog = async (editedBlog) => {
+    const id = editedBlog.id
+
+    try {
+      await blogService.update(id, editedBlog)
+
+      const blogs = await blogService.getAll()
+      
+      setBlogs(blogs)
     } catch (exception) {
       console.log(exception)
     }
@@ -105,7 +119,11 @@ const App = () => {
           </Togglable>
 
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog 
+              key={blog.id}
+              blog={blog}
+              editBlog={updateBlog}
+            />
           )}
         </div>
       }

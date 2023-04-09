@@ -23,7 +23,7 @@ const Blog = ({ blog, editBlog, loggedinUser, removeBlog }) => {
       <div>
         <strong>{blog.title}</strong> by {blog.author} <button onClick={toggleVisibility}>{visible ? 'Hide' : 'View'}</button>
       </div>
-      <div style={detailsStyle}>
+      <div style={detailsStyle} className='togglableDetails'>
         <p>{blog.url}</p>
         <p>{blog.likes} likes <button onClick={() => editBlog({ ...blog, likes: ++blog.likes })}>👍</button></p>
         <p>{blog.user.name}</p>

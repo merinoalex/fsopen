@@ -5,7 +5,7 @@
 - To clone a repo, navigate to the `part 5` directory and run `git clone <url>`
 - After cloning, run `npm install` to install all the dependencies and node modules
 - Start the backend worked from the previous part with `npm run dev`, it will run on **port 3001**
-- In a separate terminal, run the frontend with `npm start`
+- In a separate terminal, run the frontend with `npm start` (it will run on **port 3000**)
 - :x: Don't mix `async`/`await` and `then` syntax inside the same code to avoid problems
 - Ignore eslint anonymous export error with a `// eslint-disable-next-line import/no-anonymous-default-export` comment
 - Conditional rendering in React with the `&&` trick
@@ -23,7 +23,7 @@ The application was initially cloned from [the base solution](https://github.com
 
 ### App
 
-- Login form
+- **Login form**
   - State variables for username and password
   - Handlers
   - Logging in is done via an HTTP POST request to server address *api/login*
@@ -31,14 +31,15 @@ The application was initially cloned from [the base solution](https://github.com
   - On login success, server response (including token and user details) are saved to *user* field of app's state
   - The login details are saved to local storage, parsed to JSON
   - An effect hook parses this JSON data to verify the user is still logged-in
-- Blogs
+- **Blogs**
   - The token of the logged-in user is added to the *Authorization* header of the HTTP request when creating new entries, received by **axios**
   - A GET request (and the blog db state is updated) is made every time a blog is added, updated or deleted to show all up-to-date information
   - [Part 4](../part4/) backend was updated to support update and delete operations
   - Blog entries are sorted descending by the number of likes
-- Togglable component
+  - *services/blogs.js* module
+- **Togglable component**
   - References are used to trigger it after blog creation, kept throughout re-renders
-- Likes button
+- **Likes button**
   - Likes are increased by making an HTTP PUT request to *api/blogs/{id}*, replacing the entire blog entry
 
 ### Dependencies
@@ -51,6 +52,58 @@ The application was initially cloned from [the base solution](https://github.com
   - :x: Don't run `eslint --init`, as it will install the latest ESlint version that isn't compatible with the create-react-app config file
   - `npm install --save-dev eslint-plugin-jest`
   - *.eslintrc.js* file contains configuration
+
+### Testing
+
+- Tests are implemented with Jest, just as in the last part
+- *Create-react-app* apps come configured with Jest by default
+- Rendering React components is aided by the [react-testing-library](https://github.com/testing-library/react-testing-library)
+  - `npm install --save-dev @testing-library/react @testing-library/jest-dom`
+  - [jest-dom](https://testing-library.com/docs/ecosystem-jest-dom/) provides custom DOM element matchers for Jest
+- Following the convention to write tests' files alongside the components files (according to *create-react-app* config)
+- Either run tests with `npm test` (with watch mode) or `$env:CI=$true; npm test` (normal) for PowerShell
+  - May need to install [Watchman](https://facebook.github.io/watchman/)
+- [user-event](https://testing-library.com/docs/user-event/intro/) library facilitates simulating user input
+  - `npm install --save-dev @testing-library/user-event`
+- Find out the coverage of tests by running `$env:CI=$true; npm test -- --coverage`
+
+- **Tools**
+  - `render(element)` (rtl)
+    - Returns `container` object
+      - Can use `querySelector` to find elements according to their selectors
+      - `const { container } = render(<Note note={note} />)`
+  - `screen` object accesses the rendered elements (rtl)
+    - ByText
+    - ByTestId
+    - ByRole
+    - ByPlaceholderText
+    - `debug()`
+    - `getByText(text, { exact: false })`
+      - Options to look for an element *containing* some text
+  - Queries (rtl)
+    - Single element
+      - getBy
+        - *Throws an error* on no match (or multiple), returns *element*
+        - Doesn't require `expect` assertion
+      - queryBy
+        - *Returns `null`* on no match (or error for multiple), returns *element*
+      - findBy
+        - *Throws an error* on no match (or multiple), returns *element*, *retries*
+        - Doesn't require `expect` assertion
+        - Returns a promise
+    - Multiple elements (return arrays)
+      - getAllBy
+      - queryAllBy
+      - findAllBy
+  - Matchers (jest-dom)
+    - `toHaveTextContent(text)`
+    - `toHaveStyle(css)`
+  - Mock objects (Jest)
+    - `jest.fn()`
+  - Sessions (ue)
+    - `userEvent.setup()`
+    - `click(element)`
+    - `type(element, text)`
 
 ***
 

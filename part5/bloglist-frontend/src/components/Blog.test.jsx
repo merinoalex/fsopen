@@ -21,11 +21,14 @@ describe('<Blog />', () => {
 
   let container
 
+  const mockHandler = jest.fn()
+
   beforeEach(() => {
     container = render(
       <Blog
         blog={blog}
         loggedinUser={loggedinUser}
+        editBlog={mockHandler}
       />).container
   })
 
@@ -48,5 +51,16 @@ describe('<Blog />', () => {
     expect(url).toBeDefined()
     expect(likes).toBeDefined()
     expect(name).toBeDefined()
+  })
+
+  test('Like button is clicked twice causing the event handler to be called twice', async () => {
+    const user = userEvent.setup()
+    const viewButton = screen.getByRole('button')
+    await user.click(viewButton)
+
+    const likeButton = screen.getAllByRole('button')[1]
+    await user.dblClick(likeButton)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
   })
 })

@@ -105,6 +105,10 @@ The application was initially cloned from [the base solution](https://github.com
     - `click(element)`
     - `type(element, text)`
 
+- **Tests**
+  - `mockHandler.mock.calls[0][0]` refers to the *first call* and its *first argument* respectively
+  - `TogglableDetails` on `<Blog />` is the only test-specific class used by `querySelector`
+
 ***
 
 ## Full Stack developer's oath

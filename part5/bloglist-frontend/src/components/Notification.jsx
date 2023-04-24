@@ -12,7 +12,7 @@ const Notification = ({ info }) => {
   if (!info.message) return null
 
   return (
-    <div style={style}>
+    <div style={style} className="notification">
       {info.message}
     </div>
   )

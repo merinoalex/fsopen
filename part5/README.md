@@ -154,6 +154,7 @@ The application was initially cloned from [the base solution](https://github.com
     - `cy.request()`
 
 - **Tests**
+  - Added a *baseUrl* and an environment variable for the backend
   - Test login flow only once; bypass the UI for subsequent tests
 
 ***

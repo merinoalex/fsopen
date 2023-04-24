@@ -55,6 +55,8 @@ The application was initially cloned from [the base solution](https://github.com
 
 ### Testing
 
+#### Jest
+
 - Tests are implemented with Jest, just as in the last part
 - *Create-react-app* apps come configured with Jest by default
 - Rendering React components is aided by the [react-testing-library](https://github.com/testing-library/react-testing-library)
@@ -108,6 +110,50 @@ The application was initially cloned from [the base solution](https://github.com
 - **Tests**
   - `mockHandler.mock.calls[0][0]` refers to the *first call* and its *first argument* respectively
   - `TogglableDetails` on `<Blog />` is the only test-specific class used by `querySelector`
+
+#### Cypress
+
+- Install Cypress as a dev dependency 
+  - `npm install --save-dev cypress`
+- Run cypress on a terminal `npx cypress open` or through its own npm-script
+- Cypress tests can be in the frontend's, backend's or their own separate repo
+  - They require the tested system to be running
+- Added an npm script to the *bloglist backend* in Part 4 to start it in test mode *(NODE_ENV=test)* - `npm run start:test`
+- When backend and frontend are running, start Cypress with `npm run cypress:open`
+  - Had to update the test database to hold necessary values, such as user id in blog posts, and name for root user
+- Avoid using arrow functions to access Mocha's context
+- Install eslint-plugin-cypress as a dev dependency
+  - `npm install eslint-plugin-cypress --save-dev`
+  - Change *.eslintrc.js* to consider Cypress
+- Consider all changes to the browser's state are reset after each test
+- Added an API endpoint to the *bloglist backend* for clearing the test database by making an HTTP POST request to */api/testing/reset*
+- CSS properties behave differently on Firefox (`border-style`, `border-radius` and `padding`), they may cause error with tests
+- Cypresss commands don't **return** values, instead they **yield** them
+
+- **Tools**
+  - `describe(title, fn)` blocks
+  - `it(title, fn)` for test cases
+    - `it.only` to only run this test
+    - `it.skip` to skip it
+  - Cypress commands
+    - Queries
+      - `cy.contains()`
+        - Get DOM element *containing* text
+      - `cy.get()`
+        - Get one or more DOM elements by selector or **alias**
+    - Actions
+      - `cy.click()`
+      - `cy.type()`
+    - Assertions
+      - `.should()`
+        - Automatically retries until pass or timeout
+      - `.and()`
+        - Alias of `.should()` for chaining after it
+    - `cy.visit()`
+    - `cy.request()`
+
+- **Tests**
+  - Test login flow only once; bypass the UI for subsequent tests
 
 ***
 

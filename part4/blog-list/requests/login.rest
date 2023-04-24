@@ -1,25 +1,8 @@
-POST http://localhost:3003/api/login
+@baseUrl = http://localhost:3003/api/login
+POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "username": "mluukkai",
-  "password": "salainen"
-}
-
-###
-POST http://localhost:3003/api/login
-Content-Type: application/json
-
-{
-  "username": "mluukkai",
-  "password": "wrong"
-}
-
-###
-POST http://localhost:3003/api/login
-Content-Type: application/json
-
-{
-  "username": "hellas",
-  "password": "salainen"
+  "username": "root",
+  "password": "geheim"
 }

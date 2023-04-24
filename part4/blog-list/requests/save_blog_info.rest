@@ -1,3 +1,23 @@
+@baseUrl = http://localhost:3003/api/blogs
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY0MDBmZGYyM2YxY2MxZGJiZGQwM2FhYyIsImlhdCI6MTY4MjI5MTAwMCwiZXhwIjoxNjgyMjk0NjAwfQ.AN2yTaR2CDjmnNqRDClAGhH5NE_lI8aMwvUvhutOehE
+@title = Representational State Transfer (REST)
+@author = Roy Fielding
+@url = https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
+@likes = 3
+@userId = 6400fdf23f1cc1dbbdd03aac
+POST {{baseUrl}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "{{title}}",
+  "author": "{{author}}",
+  "url": "{{url}}",
+  "likes": "{{likes}}",
+  "user": "{{userId}}"
+}
+
+###
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
@@ -30,17 +50,5 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sd
   "title": "On let vs const",
   "author": "Dan Abramov",
   "url": "https://overreacted.io/on-let-vs-const/",
-  "likes": 0
-}
-
-###
-POST http://localhost:3003/api/blogs
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2M2ZmYjdkNGVlNDY1YzllZjgwNDJiMjkiLCJpYXQiOjE2Nzc3MjI3MzB9.8rA8R7KcqiaISzdiF5Cyn_L3lBG1zEV8ZkhzG_TbgQM
-
-{
-  "title": "Placeholder",
-  "author": "Placehoder",
-  "url": "example.com",
   "likes": 0
 }

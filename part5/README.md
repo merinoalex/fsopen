@@ -129,6 +129,7 @@ The application was initially cloned from [the base solution](https://github.com
 - Added an API endpoint to the *bloglist backend* for clearing the test database by making an HTTP POST request to */api/testing/reset*
 - CSS properties behave differently on Firefox (`border-style`, `border-radius` and `padding`), they may cause error with tests
 - Cypresss commands don't **return** values, instead they **yield** them
+- Changed line endings from CRLF to LF
 
 - **Tools**
   - `describe(title, fn)` blocks

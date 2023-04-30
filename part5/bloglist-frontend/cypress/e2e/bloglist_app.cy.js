@@ -72,11 +72,19 @@ describe('Bloglist app', function() {
       })
 
       it('users can like a blog entry', function() {
-        cy.get('#blog-list').contains('View').click()
+        cy.get('#blog-list').children(':first-child').find('button').contains('View').click()
 
-        cy.get('button').contains('👍').click()
+        cy.get('#blog-list').children(':first-child').find('button').contains('👍').click()
 
-        cy.get('#blog-list').should('contain', '1 likes')
+        cy.get('#blog-list').children(':first-child').should('contain', '1 likes')
+      })
+
+      it('it can be deleted by the creator of the entry', function() {
+        cy.get('#blog-list').children(':first-child').find('button').contains('View').click()
+
+        cy.get('#blog-list').children(':first-child').find('button').contains('Remove').click()
+
+        cy.get('#blog-list').should('be.empty')
       })
     })
   })

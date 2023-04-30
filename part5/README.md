@@ -142,6 +142,10 @@ The application was initially cloned from [the base solution](https://github.com
         - Get DOM element *containing* text
       - `cy.get()`
         - Get one or more DOM elements by selector or **alias**
+      - `cy.find()`
+        - Get descendent DOM elements of a specific selector
+      - `cy.children()`
+        - Get children of each DOM element within a set of DOM elements
     - Actions
       - `cy.click()`
       - `cy.type()`
@@ -161,6 +165,7 @@ The application was initially cloned from [the base solution](https://github.com
   - → At 5.19, figured I forgot to add `setToken` at the Effect Hook for validating the logged-in user, which was causing requests to add a blog to be sent without a token
     - Enabled logging for test environment
   - Wrapped the blog list items in a `div` with id *"#blog-list"* to select it during tests
+  - Used `.children()` and `.find()` to select the specific blog entry we are targeting at tests
 
 ***
 

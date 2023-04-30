@@ -166,6 +166,7 @@ The application was initially cloned from [the base solution](https://github.com
     - Enabled logging for test environment
   - Wrapped the blog list items in a `div` with id *"#blog-list"* to select it during tests
   - Used `.children()` and `.find()` to select the specific blog entry we are targeting at tests
+  - Test ensuring only the creators can delete their own entries bypasses UI to create a new user and login, and finally checks there is no *"Remove"* button 
 
 ***
 

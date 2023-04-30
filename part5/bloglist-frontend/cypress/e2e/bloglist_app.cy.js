@@ -86,6 +86,23 @@ describe('Bloglist app', function() {
 
         cy.get('#blog-list').should('be.empty')
       })
+
+      it('it cannot be deleted by someone other than the creator of the entry', function() {
+        const newUser = {
+          name: 'Alex',
+          username: 'alex',
+          password: 'salainen'
+        }
+        cy.request('POST', `${Cypress.env('BACKEND')}/users`, newUser)
+
+        cy.contains('Logout').click
+
+        cy.login({ username: 'alex', password: 'salainen' })
+
+        cy.get('#blog-list').children(':first-child').find('button').contains('View').click()
+
+        cy.get('#blog-list').children(':first-child').find('button').should('not.contain', 'Remove')
+      })
     })
   })
 })

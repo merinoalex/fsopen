@@ -1,8 +1,22 @@
-const blog = {
-  title: 'Microservices and the First Law of Distributed Objects',
-  author: 'Martin Fowler',
-  url: 'https://martinfowler.com/articles/distributed-objects-microservices.html'
-}
+const blogs = [
+  {
+    title: 'Microservices and the First Law of Distributed Objects',
+    author: 'Martin Fowler',
+    url: 'https://martinfowler.com/articles/distributed-objects-microservices.html'
+  },
+  {
+    title: 'Things I Don’t Know as of 2018',
+    author: 'Dan Abramov',
+    url: 'https://overreacted.io/things-i-dont-know-as-of-2018/',
+    likes: 15
+  },
+  {
+    title: 'On let vs const',
+    author: 'Dan Abramov',
+    url: 'https://overreacted.io/on-let-vs-const/',
+    likes: 5
+  }
+]
 
 describe('Bloglist app', function() {
   beforeEach(function() {
@@ -53,21 +67,21 @@ describe('Bloglist app', function() {
     it('a new blog entry can be created', function() {
       cy.contains('Add blog').click()
 
-      cy.get('input[name="Title"]').type(blog.title)
-      cy.get('input[name="Author"]').type(blog.author)
-      cy.get('input[name="URL"]').type(blog.url)
+      cy.get('input[name="Title"]').type(blogs[0].title)
+      cy.get('input[name="Author"]').type(blogs[0].author)
+      cy.get('input[name="URL"]').type(blogs[0].url)
 
       cy.get('#submit-blog').click()
 
-      cy.get('#blog-list').should('contain', blog.title)
+      cy.get('#blog-list').should('contain', blogs[0].title)
     })
 
     describe('and a blog entry exists,', function() {
       beforeEach(function () {
         cy.addBlog({
-          title: blog.title,
-          author: blog.author,
-          url: blog.url
+          title: blogs[0].title,
+          author: blogs[0].author,
+          url: blogs[0].url
         })
       })
 
@@ -102,6 +116,36 @@ describe('Bloglist app', function() {
         cy.get('#blog-list').children(':first-child').find('button').contains('View').click()
 
         cy.get('#blog-list').children(':first-child').find('button').should('not.contain', 'Remove')
+      })
+    })
+
+    describe('and several blog entries exist,', function() {
+      beforeEach(function () {
+        cy.addBlog({
+          title: blogs[0].title,
+          author: blogs[0].author,
+          url: blogs[0].url
+        })
+
+        cy.addBlog({
+          title: blogs[1].title,
+          author: blogs[1].author,
+          url: blogs[1].url,
+          likes: blogs[1].likes
+        })
+
+        cy.addBlog({
+          title: blogs[2].title,
+          author: blogs[2].author,
+          url: blogs[2].url,
+          likes: blogs[2].likes
+        })
+      })
+
+      it('blog entries are ordered descending according to amount of likes', function() {
+        cy.get('#blog-list').children().eq(0).should('contain', blogs[1].title)
+        cy.get('#blog-list').children().eq(1).should('contain', blogs[2].title)
+        cy.get('#blog-list').children().eq(2).should('contain', blogs[0].title)
       })
     })
   })

@@ -1,4 +1,10 @@
-describe('Bloglist app', function () {
+const blog = {
+  title: 'Microservices and the First Law of Distributed Objects',
+  author: 'Martin Fowler',
+  url: 'https://martinfowler.com/articles/distributed-objects-microservices.html'
+}
+
+describe('Bloglist app', function() {
   beforeEach(function() {
     cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
     const user = {
@@ -15,7 +21,7 @@ describe('Bloglist app', function () {
     cy.contains('Log in to Application')
   })
 
-  describe('Login', function () {
+  describe('Login', function() {
     it('succeeds with correct credentials', function() {
       cy.contains('Log in').click()
 
@@ -47,13 +53,31 @@ describe('Bloglist app', function () {
     it('a new blog entry can be created', function() {
       cy.contains('Add blog').click()
 
-      cy.get('input[name="Title"]').type('Microservices and the First Law of Distributed Objects')
-      cy.get('input[name="Author"]').type('Martin Fowler')
-      cy.get('input[name="URL"]').type('https://martinfowler.com/articles/distributed-objects-microservices.html')
+      cy.get('input[name="Title"]').type(blog.title)
+      cy.get('input[name="Author"]').type(blog.author)
+      cy.get('input[name="URL"]').type(blog.url)
 
       cy.get('#submit-blog').click()
 
-      cy.get('#blog-list').should('contain', 'Microservices and the First Law of Distributed Objects')
+      cy.get('#blog-list').should('contain', blog.title)
+    })
+
+    describe('and a blog entry exists,', function() {
+      beforeEach(function () {
+        cy.addBlog({
+          title: blog.title,
+          author: blog.author,
+          url: blog.url
+        })
+      })
+
+      it('users can like a blog entry', function() {
+        cy.get('#blog-list').contains('View').click()
+
+        cy.get('button').contains('👍').click()
+
+        cy.get('#blog-list').should('contain', '1 likes')
+      })
     })
   })
 })

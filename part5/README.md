@@ -155,7 +155,11 @@ The application was initially cloned from [the base solution](https://github.com
 
 - **Tests**
   - Added a *baseUrl* and an environment variable for the backend
+  - I use the `name` attribute on the input fields for login to more reliably select them
   - Test login flow only once; bypass the UI for subsequent tests
+    - Added a custom `login` command to create cleaner code
+  - → At 5.19, figured I forgot to add `setToken` at the Effect Hook for validating the logged-in user, which was causing requests to add a blog to be sent without a token
+    - Enabled logging for test environment
 
 ***
 

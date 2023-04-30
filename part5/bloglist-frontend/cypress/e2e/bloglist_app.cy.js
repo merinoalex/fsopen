@@ -38,4 +38,22 @@ describe('Bloglist app', function () {
       cy.get('.notification').should('have.css', 'border-style', 'solid')
     })
   })
+
+  describe('When logged in,', function() {
+    beforeEach(function() {
+      cy.login({ username: 'root', password: 'salainen' })
+    })
+
+    it('a new blog entry can be created', function() {
+      cy.contains('Add blog').click()
+
+      cy.get('input[name="Title"]').type('Microservices and the First Law of Distributed Objects')
+      cy.get('input[name="Author"]').type('Martin Fowler')
+      cy.get('input[name="URL"]').type('https://martinfowler.com/articles/distributed-objects-microservices.html')
+
+      cy.get('#submit-blog').click()
+
+      cy.get('#blog-list').should('contain', 'Microservices and the First Law of Distributed Objects')
+    })
+  })
 })

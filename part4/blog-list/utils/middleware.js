@@ -21,12 +21,19 @@ const tokenExtractor = (req, res, next) => {
 }
 
 const userExtractor = async (req, res, next) => {
-  const decodedToken = jwt.verify(req.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return res.status(401).json({ error: 'Token invalid' })
-  }
+  const token = req.token
 
-  req.user = await User.findById(decodedToken.id)
+  if (token) {
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return res.status(401).json({ error: 'Token invalid' })
+    }
+
+    req.user = await User.findById(decodedToken.id)
+  } else {
+    req.user = null
+    logger.error('Token was empty')
+  }
 
   next()
 }
